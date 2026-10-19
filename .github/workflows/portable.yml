@@ -23,7 +23,7 @@ jobs:
           env = dict(os.environ)
           for key in ['PYTHONHOME', 'PYTHONPATH', 'VIRTUAL_ENV', 'TCL_LIBRARY', 'TK_LIBRARY']:
               env.pop(key, None)
-          env['PATH'] = str(pathlib.Path(env['SystemRoot']) / 'System32')
+          env['PATH'] = str(pathlib.Path(os.environ['SystemRoot']) / 'System32')
           subprocess.run([str(exe), '--diagnostics', '--data-dir', str(data)], env=env, check=True, timeout=30)
           result = json.loads((data / 'diagnostics.json').read_text(encoding='utf-8'))
           assert result['frozen'] and result['required_files_present'], result
