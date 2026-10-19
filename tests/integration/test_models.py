@@ -26,7 +26,6 @@ class NativeModelTests(unittest.TestCase):
             self.assertEqual({e["name"] for e in entries}, wanted)
             archive = game / "data" / "AHM05_01.pp"
             build_archive(source / "AHM05_01.pp", entries, {}, archive)
-            shutil.copy2(source / "PPExtractor0.6.2.exe", game / "data" / "PPExtractor0.6.2.exe")
             studio = Studio(game, target / "workspace" / "textures")
             # The only write target is a temporary game copy with no running executable.
             studio.game_closed = lambda: None

@@ -37,7 +37,6 @@ class TextureRoundTripTests(unittest.TestCase):
         ema = read_archive(source / 'AHM00_00.pp')[0]
         self.ema_name = ema['name']
         build_archive(source / 'AHM00_00.pp', [ema], {}, data / 'AHM00_00.pp')
-        shutil.copy2(source / 'PPExtractor0.6.2.exe', data / 'PPExtractor0.6.2.exe')
         self.studio = Studio(self.game, self.root / 'workspace')
         # Only the private resource copy is ever written; a running real game is irrelevant.
         self.studio.game_closed = lambda: None

@@ -55,7 +55,8 @@ class Handler(TextureHandler):
                 self.send({"service": "HomeMate Asset Workshop", "version": __version__, "token": self.studio.token,
                            "game_dir": str(self.studio.game_dir), "workspace": str(self.server.workspace),
                            "game_available": (self.studio.game_dir / "data").is_dir(),
-                           "extractor_available": self.studio.extractor.is_file(),
+                           "archive_backend": "builtin-ahm", "archive_backend_available": True,
+                           "extractor_available": True,
                            "portable": hasattr(self.server, "portable_data_dir"),
                            "model_count": len(manifest["models"]), "models_prepared": manifest["prepared"],
                            "staged_count": len(self.studio.staged), "backups": self.studio.backups()})

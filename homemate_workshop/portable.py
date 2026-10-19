@@ -45,11 +45,9 @@ def inspect_game(value, extractor=None):
     game = normalize_game(value)
     data = game / "data" if game else None
     archives = bool(data and data.is_dir() and next(data.glob("*.pp"), None))
-    tool = Path(str(extractor).strip().strip('"')).expanduser().resolve() if extractor else data / "PPExtractor0.6.2.exe" if data else None
-    tool_ok = bool(tool and tool.is_file() and tool.name.casefold() == "ppextractor0.6.2.exe")
     return {"game_dir": str(game) if game else "", "game_available": archives,
-            "extractor": str(tool) if tool else "", "extractor_available": tool_ok,
-            "ready": archives and tool_ok}
+            "extractor": "", "extractor_available": True, "archive_backend": "builtin-ahm",
+            "ready": archives}
 
 
 class Settings:
@@ -69,7 +67,7 @@ class Settings:
                 logging.warning("Could not read settings: %s", error)
         # Game locations are machine-specific. A moved portable app asks again if needed.
         self.game = str(self.values.get("game_dir") or "")
-        self.extractor = str(self.values.get("extractor") or "")
+        self.extractor = ""  # Legacy external-tool setting is no longer used.
         if not self.game:
             for candidate in [application_dir().parent, application_dir()]:
                 if inspect_game(candidate)["game_available"]:
@@ -80,12 +78,10 @@ class Settings:
     def workspace(self):
         return self.data_dir / "workspace"
 
-    def save(self, game, extractor):
+    def save(self, game, extractor=None):
         checked = inspect_game(game, extractor)
         if not checked["game_available"]:
             raise ValueError("请选择包含 data/*.pp 的游戏根目录，也可以直接选择 data 目录")
-        if not checked["extractor_available"]:
-            raise ValueError("没有找到 PPExtractor0.6.2.exe，请选择自己准备的解包工具")
         # Do not silently point existing staged work/backups at a different game.
         existing = self.values.get("game_dir")
         if existing and normalize_game(existing) != normalize_game(checked["game_dir"]):
@@ -96,7 +92,7 @@ class Settings:
             if has_staged or has_backups:
                 raise ValueError("当前工作区已有待写入内容或备份。切换游戏请另建一份便携版目录，保留原 userdata。")
         self.game, self.extractor = checked["game_dir"], checked["extractor"]
-        self.values = {"game_dir": self.game, "extractor": self.extractor}
+        self.values = {"game_dir": self.game, "archive_backend": "builtin-ahm"}
         atomic_json(self.path, self.values)
         return checked
 

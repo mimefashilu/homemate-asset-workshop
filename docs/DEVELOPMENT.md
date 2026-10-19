@@ -10,6 +10,7 @@ homemate_workshop/
   runtime.py          冻结路径、实例锁和外部工具调用
   server.py           统一 HTTP 路由、会话校验、静态文件
   studio.py           贴图资源、工作区、原生调用、安装与恢复
+  ahm_codec.py        独立实现的 AHM 成员编解码、目录封包和 EMA 封装
   formats.py          AHM PP 目录、XX 贴图解析与写回
   model_io.py         XX v2 网格布局与 Three.js 几何
   model_ops.py        有位移边界的头发几何操作与候选
@@ -51,7 +52,7 @@ Remove-Item Env:HM_TEST_GAME_DIR
 python tools/package_release.py
 ```
 
-输出 `dist/homemate-asset-workshop-v0.3.0-source.zip` 与 `.zip.sha256`。发布包采用路径/后缀白名单和大小检查，过滤工作区、日志、私有配置和游戏二进制文件，并检查文本中的常见个人用户路径和凭据形态。Windows 便携版构建见 [PACKAGING.md](PACKAGING.md)。白名单新增目录或资源类型时同步检查包内容。
+输出 `dist/homemate-asset-workshop-v0.4.0-source.zip` 与 `.zip.sha256`。发布包采用路径/后缀白名单和大小检查，过滤工作区、日志、私有配置和游戏二进制文件，并检查文本中的常见个人用户路径和凭据形态。Windows 便携版构建见 [PACKAGING.md](PACKAGING.md)。白名单新增目录或资源类型时同步检查包内容。
 
 Python wheel 可选：`python -m build`。包数据声明包含网页、前端库和 ComfyUI 模板；安装后显式设置本地配置/工作区，避免写入 Python 安装目录。
 

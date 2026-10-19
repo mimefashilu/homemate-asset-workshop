@@ -11,16 +11,15 @@ Target: Windows 10/11 x64; tested on Windows 11. The portable ZIP includes Pytho
 1. Download the **windows-x64-portable.zip** release and extract the entire folder.
 2. Double-click **素材工坊.exe**, keeping the accompanying `_internal` folder.
 3. Select the game root containing `data/*.pp`, or its `data` directory.
-4. The launcher detects `data/PPExtractor0.6.2.exe`, or lets you choose your own copy elsewhere.
-5. Start the workshop. Selected paths are saved for future launches.
+4. Start the workshop. AHM archive reading/writing is built in, and the game path is saved for future launches.
 
-The game and external extractor are not included or automatically downloaded. Settings, candidates, exports, backups and logs are saved in `userdata` beside the EXE, falling back to a displayed user-local directory if necessary. Closing the launcher waits for active work and stops the service; repeated launches reuse the existing instance.
+Only your own game is required. Since v0.4.0, an independently implemented AHM archive backend is included: no PPExtractor download or EXE selection is needed. The historical EXE is not bundled. See [backend verification](docs/ARCHIVE_BACKEND.md). Settings, candidates, exports, backups and logs are saved in `userdata` beside the EXE, falling back to a displayed user-local directory if necessary. Closing the launcher waits for active work and stops the service; repeated launches reuse the existing instance.
 
 For updates, stop the old version, extract the new version elsewhere and copy the old `userdata` beside the new EXE. See [portable instructions](docs/PORTABLE.md) and [packaging checks](docs/PACKAGING.md).
 
 ## Run from source
 
-Requirements: Windows, Python 3.10+, Pillow, NumPy, your own game installation, and your own `data/PPExtractor0.6.2.exe` for AHM resource extraction/encoding. Game files and the extractor are not distributed here. The dashboard works without game data.
+Requirements: Windows, Python 3.10+, Pillow, NumPy and your own game installation. AHM extraction/encoding is built in. Game files are not distributed here; the dashboard works without game data.
 
 ```powershell
 python -m pip install -r requirements.txt

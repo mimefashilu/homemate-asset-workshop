@@ -11,7 +11,7 @@ async function refresh() {
   byId('game-dir').textContent = state.game_dir; byId('workspace').textContent = state.workspace;
   byId('staged-count').textContent = state.staged_count; byId('model-count').textContent = state.model_count;
   byId('backup-count').textContent = state.backups.length;
-  byId('environment').textContent = !state.game_available ? (state.portable ? '请在启动窗口选择游戏目录。' : '尚未找到游戏 data 目录，请在 config.local.json 中设置 game_dir 后重新启动。') : !state.extractor_available ? (state.portable ? '请在启动窗口选择自己的 PPExtractor0.6.2.exe。' : '已找到游戏目录；提取和写入还需要 data/PPExtractor0.6.2.exe。') : '本地环境已就绪。';
+  byId('environment').textContent = !state.game_available ? (state.portable ? '请在启动窗口选择游戏目录。' : '尚未找到游戏 data 目录，请在 config.local.json 中设置 game_dir 后重新启动。') : '本地环境已就绪，AHM 资源读写已内置。';
   byId('prepare-models').disabled = !state.extractor_available;
   const select = byId('backup-select'); select.replaceChildren();
   for (const backup of state.backups) select.add(new Option(`${backup.id} · ${backup.kind === 'models' ? '模型' : '贴图'} · ${backup.status}`, backup.id));

@@ -38,7 +38,8 @@ class PortableTests(unittest.TestCase):
         self.settings()
         again = Settings(self.data)
         self.assertEqual(again.game, str(self.game.resolve()))
-        self.assertEqual(again.extractor, str(self.tool.resolve()))
+        self.assertEqual(again.extractor, "")
+        self.assertEqual(again.values["archive_backend"], "builtin-ahm")
 
     def test_corrupt_settings_are_preserved_and_reported(self):
         path = self.data / "settings.json"
@@ -47,11 +48,11 @@ class PortableTests(unittest.TestCase):
         self.assertTrue(settings.warning)
         self.assertEqual(path.read_text(encoding="utf-8"), "broken JSON")
 
-    def test_missing_tool_does_not_save_partial_settings(self):
+    def test_no_external_tool_is_required(self):
         settings = Settings(self.data)
-        with self.assertRaisesRegex(ValueError, "解包工具"):
-            settings.save(self.game, self.root / "missing.exe")
-        self.assertFalse(settings.path.exists())
+        checked = settings.save(self.game)
+        self.assertTrue(checked["ready"])
+        self.assertTrue(settings.path.exists())
 
     def test_os_instance_lock_releases_after_close(self):
         path = self.data / "instance.lock"

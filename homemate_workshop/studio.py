@@ -26,6 +26,7 @@ from PIL import Image, ImageFilter
 
 from .formats import build_archive, convert_image, exact, image_bytes, read_archive, read_xx, replace_xx, safe_name
 from .runtime import run_external, clean_dll_search
+from .ahm_codec import process as process_ahm, transform as transform_ahm, ema_parts
 
 APP_DIR = Path(__file__).resolve().parent
 IMAGE_EXTENSIONS = {'.bmp', '.tga', '.ema', '.png', '.jpg', '.dds'}
@@ -154,13 +155,8 @@ class Studio:
             return records
 
     def native(self, argument):
-        tool = self.extractor
-        if not tool.is_file():
-            raise ValueError('没有找到 PPExtractor0.6.2.exe，请在启动器中选择工具或放到游戏 data 目录')
-        result = run_external([str(tool), '/AHM', '/noretro', str(argument)], cwd=argument.parent,
-                                capture_output=True, timeout=300)
-        if result.returncode:
-            raise ValueError('PPExtractor failed: ' + (result.stdout + result.stderr).decode('mbcs', errors='replace')[-1000:])
+        # Kept as an internal API name for existing callers; no EXE is launched.
+        return process_ahm(argument)
 
     def decoded(self, archive, member):
         with self.lock:
@@ -461,12 +457,27 @@ class Studio:
                 raise ValueError('Staged texture changed outside the tool')
             if record['texture'] is not None:
                 groups[record['member']][record['texture']] = data
+            elif record['member'].lower().endswith('.ema'):
+                source, entries, _ = self.archive(archive)
+                entry = next(e for e in entries if e['name'] == record['member'])
+                with source.open('rb') as stream:
+                    stream.seek(entry['offset'])
+                    prefix = transform_ahm(exact(stream, min(entry['size'], 64)), final=entry['size'] <= 64)
+                header, _image, _extension = ema_parts(prefix)
+                (incoming / safe_name(record['member'])).write_bytes(header + data)
             else:
                 (incoming / safe_name(record['export_name'])).write_bytes(data)
         for member, textures in groups.items():
             source = self.decoded(archive, member).read_bytes()
             (incoming / member).write_bytes(replace_xx(source, textures))
-        expected_plaintext = {path.name: path.read_bytes() for path in incoming.iterdir()}
+        expected_plaintext = {}
+        for path in incoming.iterdir():
+            data = path.read_bytes()
+            if path.suffix.lower() == '.ema':
+                _header, image, extension = ema_parts(data)
+                expected_plaintext[path.name + extension] = image
+            else:
+                expected_plaintext[path.name] = data
         self.native(incoming)
         packed = work / 'incoming.pp'
         encoded = read_archive(packed)

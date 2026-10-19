@@ -139,12 +139,9 @@ def main():
             target = game / "data" / archive_name
             build_archive(source, entries, {}, target)
             copy_hashes[archive_name] = file_hash(target)
-        tool = root / "解包 工具" / "PPExtractor0.6.2.exe"
-        tool.parent.mkdir()
-        shutil.copy2(source_data / "PPExtractor0.6.2.exe", tool)
         ready_gui_data = root / "ready-ui"
         result = subprocess.run([str(program), "--gui-check", "--no-browser", "--port", "0", "--data-dir", str(ready_gui_data),
-                                 "--game-dir", str(game), "--extractor", str(tool)], timeout=30, **flags)
+                                 "--game-dir", str(game)], timeout=30, **flags)
         assert result.returncode == 0
         ready_gui = json.loads((ready_gui_data / "gui-check.json").read_text(encoding="utf-8"))
         assert ready_gui["passed"] and ready_gui["service_running"], ready_gui
@@ -153,13 +150,15 @@ def main():
         shutil.copy2(ready_gui_data / "launcher.png", output / "launcher-ready.png")
         data_dir = root / "userdata"
         process = subprocess.Popen([str(program), "--serve", "--no-browser", "--port", "0", "--game-dir", str(game),
-                                    "--extractor", str(tool), "--data-dir", str(data_dir)], **flags)
+                                    "--data-dir", str(data_dir)], **flags)
         base = None
         try:
             base = wait_ready(data_dir, process)
             state = get(base + "/api/workshop")
             token = state["token"]
             assert state["portable"] and state["extractor_available"]
+            assert state["archive_backend"] == "builtin-ahm"
+            assert not list(root.rglob("PPExtractor*.exe"))
             for path in ["/", "/textures/", "/models/", "/guide/", "/vendor/three.module.js"]:
                 assert urllib.request.urlopen(base + path).status == 200
             images = get(base + "/api/textures/images?" + urlencode({"archive": "AHM07_00.pp"}))
@@ -219,6 +218,7 @@ def main():
                       "package_files": len(manifest["files"]) + 1, "diagnostics": diagnostics, "first_run_gui": gui,
                       "configured_gui_start_and_close": ready_gui,
                       "restricted_environment": True, "unicode_and_spaces": True,
+                      "external_extractor_required": False,
                       "texture_native_apply_restore": "exact", "model_native_install_restore": "exact",
                       "duplicate_launch": "reused", "moved_program_and_userdata": "passed", "original_archives": "unchanged"}
             (output / "report.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -52,8 +52,8 @@ class Launcher:
         self.closing = False
         self.events = queue.Queue()
         root.title(f"御宅伴侣素材工坊 {__version__}")
-        root.geometry("740x620")
-        root.minsize(700, 610)
+        root.geometry("740x510")
+        root.minsize(700, 500)
         root.configure(background="#edf3f1")
         root.protocol("WM_DELETE_WINDOW", self.close)
         root.report_callback_exception = self.report_callback_exception
@@ -77,13 +77,12 @@ class Launcher:
         body.columnconfigure(0, weight=1)
         ttk.Label(body, text="御宅伴侣素材工坊", style="Title.TLabel").grid(row=0, column=0, sticky="w")
         ttk.Label(body, text=f"Windows 便携版  {__version__}  ·  MIT License", style="Muted.TLabel").grid(row=1, column=0, sticky="w", pady=(5, 20))
-        ttk.Label(body, text="第一次使用，选择游戏和解包工具；下次启动会记住这些位置。").grid(row=2, column=0, sticky="w", pady=(0, 12))
+        ttk.Label(body, text="选择游戏目录即可开始，AHM 资源读写已内置；下次启动会记住位置。").grid(row=2, column=0, sticky="w", pady=(0, 12))
         self.game_var = tk.StringVar(value=settings.game)
         self.tool_var = tk.StringVar(value=settings.extractor)
         self.entries, self.pickers = [], []
         for row, title, variable, command in [
             (3, "游戏目录（包含 data 的文件夹）", self.game_var, self.choose_game),
-            (5, "解包工具（PPExtractor0.6.2.exe）", self.tool_var, self.choose_tool),
         ]:
             ttk.Label(body, text=title).grid(row=row, column=0, sticky="w", pady=(6, 5))
             line = ttk.Frame(body)
@@ -118,10 +117,6 @@ class Launcher:
         self.footer.grid(row=14, column=0, sticky="w", pady=(11, 0))
         self.game_var.trace_add("write", lambda *_: self.refresh())
         self.tool_var.trace_add("write", lambda *_: self.refresh())
-        if settings.game and not settings.extractor:
-            checked = inspect_game(settings.game)
-            if checked["extractor_available"]:
-                self.tool_var.set(checked["extractor"])
         self.refresh()
         root.after(100, self.poll)
 
@@ -140,7 +135,7 @@ class Launcher:
         except (ValueError, OSError):
             checked = {"game_available": False, "extractor_available": False, "ready": False}
         self.environment.set("游戏资源：" + ("已找到" if checked["game_available"] else "未找到 data/*.pp")
-                             + "    ·    解包工具：" + ("已找到" if checked["extractor_available"] else "请选择 PPExtractor0.6.2.exe"))
+                             + "    ·    内置 AHM 读写：已就绪")
         locked = self.busy or self.running or self.closing
         for widget in self.entries + self.pickers:
             widget.configure(state="disabled" if locked else "normal")
@@ -154,14 +149,6 @@ class Launcher:
         if selected:
             checked = inspect_game(selected)
             self.game_var.set(checked["game_dir"])
-            self.tool_var.set(checked["extractor"] if checked["extractor_available"] else "")
-
-    def choose_tool(self):
-        from tkinter import filedialog
-        selected = filedialog.askopenfilename(parent=self.root, title="选择 PPExtractor0.6.2.exe",
-                                              filetypes=[("PPExtractor", "PPExtractor0.6.2.exe"), ("EXE", "*.exe")])
-        if selected:
-            self.tool_var.set(selected)
 
     def start(self):
         from tkinter import messagebox
@@ -244,7 +231,7 @@ def diagnostics(data_dir):
     from .server import WEB
     result = {"version": __version__, "frozen": bool(getattr(sys, "frozen", False)),
               "python": sys.version.split()[0], "pillow": PIL.__version__, "numpy": numpy.__version__,
-              "tk": tkinter.TkVersion, "web_files": len(list(WEB.rglob("*"))),
+              "tk": tkinter.TkVersion, "web_files": len(list(WEB.rglob("*"))), "archive_backend": "builtin-ahm",
               "required_files_present": all((WEB / name).is_file() for name in
                     ["home/index.html", "texture/app.js", "model/app.js", "vendor/three.core.js"])}
     atomic = data_dir / "diagnostics.json"
@@ -256,7 +243,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="御宅伴侣素材工坊 Windows 便携启动器")
     parser.add_argument("--data-dir", type=Path)
     parser.add_argument("--game-dir", type=Path)
-    parser.add_argument("--extractor", type=Path)
+    parser.add_argument("--extractor", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--serve", action="store_true", help="无启动窗口运行（用于自动检查）")
     parser.add_argument("--stop", action="store_true")
@@ -324,7 +311,7 @@ def main(argv=None):
                 result = {"title": root.title(), "width": root.winfo_width(), "height": root.winfo_height(),
                           "start_enabled": str(app.start_button.cget("state")) == "normal",
                           "game_entry_present": app.entries[0].winfo_exists(),
-                          "tool_entry_present": app.entries[1].winfo_exists(), "icon_loaded": hasattr(app, "icon"),
+                          "tool_entry_present": len(app.entries) > 1, "icon_loaded": hasattr(app, "icon"),
                           "service_running": app.running,
                           "content_fits": app.footer.winfo_y() + app.footer.winfo_height() <= app.footer.master.winfo_height()}
                 try:
@@ -332,7 +319,7 @@ def main(argv=None):
                         from ctypes import windll
                         window = windll.user32.GetParent(root.winfo_id()) or root.winfo_id()
                         ImageGrab.grab(window=window).save(data_dir / "launcher.png")
-                    result["passed"] = bool(result["game_entry_present"] and result["tool_entry_present"] and result["icon_loaded"]
+                    result["passed"] = bool(result["game_entry_present"] and not result["tool_entry_present"] and result["icon_loaded"]
                                             and result["content_fits"] and (not args.game_dir or app.running))
                 except Exception as error:
                     logging.exception("GUI check screenshot failed")
