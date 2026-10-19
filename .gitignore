@@ -1,0 +1,29 @@
+# Personal configuration and all generated/extracted assets
+/config.local.json
+/workspace/
+/dist/
+/build/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+*.pid
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+# Never check in game archives, executable tools, models or crash dumps
+*.pp
+*.xx
+*.exe
+*.dll
+*.dmp
+*.zip
+/tests/integration/workspace/
+**/workspace/

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>御宅伴侣 · 素材工坊</title>
+  <link rel="stylesheet" href="/shared.css"><link rel="stylesheet" href="/home.css">
+  <script src="/home.js" defer></script>
+</head>
+<body>
+  <nav class="workshop-nav" aria-label="工坊导航"><a href="/" aria-current="page">素材工坊</a><a href="/textures/">贴图</a><a href="/models/">模型</a><a href="/guide/">使用指南</a></nav>
+  <main class="dashboard">
+    <header class="hero"><span class="eyebrow">HOMEMATE ASSET WORKSHOP · 0.2</span><h1>让每一次修改，都看得见。</h1><p>浏览资源、制作贴图、调整头发模型，在写入前完成对照与检查。</p></header>
+    <section class="cards" aria-label="工坊功能">
+      <a class="feature" href="/textures/"><span class="feature-icon">纹</span><h2>贴图工坊 <span>01</span></h2><p>资源筛选与提取、透明通道保留、批量导入、差异对照与补丁打包。</p><strong>进入贴图工坊 →</strong></a>
+      <a class="feature" href="/models/"><span class="feature-icon">形</span><h2>模型工坊 <span>02</span></h2><p>三维预览、头发平滑与形变、位移热力图、候选导出与安装检查。</p><strong>进入模型工坊 →</strong></a>
+    </section>
+    <section class="workspace-panel"><div><h2>本地工作区</h2><p>贴图与模型共用备份记录，候选与待写入文件单独保存。</p></div><dl><dt>游戏目录</dt><dd id="game-dir">读取中…</dd><dt>工作目录</dt><dd id="workspace">—</dd></dl><div class="metrics"><div><strong id="staged-count">—</strong><span>待写入贴图</span></div><div><strong id="model-count">—</strong><span>已准备模型</span></div><div><strong id="backup-count">—</strong><span>备份记录</span></div></div><p id="environment" role="status">正在检查本地环境…</p><div class="actions"><button id="prepare-models">准备 / 更新模型资源</button><a href="/guide/">查看制作流程</a></div><p id="prepare-status" role="status" aria-live="polite"></p></section>
+    <section class="backup-panel"><h2>备份与恢复</h2><p>每次贴图或模型安装都会保存完整原包；选择对应记录可以恢复。</p><div class="actions"><select id="backup-select" aria-label="选择备份"><option value="">暂无备份</option></select><button id="restore-backup" disabled>恢复选中备份</button></div><p id="restore-status" role="status" aria-live="polite"></p></section>
+    <footer>从自己的游戏提取资源 · 本机浏览器操作 · 写入前备份</footer>
+  </main>
+</body>
+</html>

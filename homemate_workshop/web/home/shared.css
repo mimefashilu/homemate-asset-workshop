@@ -1,0 +1,19 @@
+.workshop-nav { display:flex; align-items:center; flex-wrap:wrap; gap:6px; min-height:46px; padding:7px 22px; background:#193c42; color:#fff; font:13px "Segoe UI","Microsoft YaHei",sans-serif; }
+.workshop-nav a { color:#d4e4e6; text-decoration:none; border-radius:5px; padding:6px 12px; }
+.workshop-nav a:first-child { margin-right:16px; font-weight:700; color:#fff; }
+.workshop-nav a:hover,.workshop-nav a[aria-current] { background:#31565d; color:#fff; }
+.workshop-nav a:focus-visible { outline:2px solid #afefdf; outline-offset:2px; }
+.model-actions { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
+.model-actions a { color:#24696a; font-size:13px; }
+#prepare-models { cursor:pointer; }
+body:has(.app-layout) { height:auto; min-height:100vh; }
+body:has(.app-layout) .app-layout { min-height:520px; }
+body:has(#stage) main { height:calc(100vh - 134px); }
+@media (max-width:760px) { .workshop-nav { padding:7px 10px; } body:has(#stage) main { height:auto; min-height:calc(100vh - 165px); } }
+@media (min-width:901px) {
+  body:has(#stage) { height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+  body:has(#stage) > header,body:has(#stage) > nav { flex-shrink:0; }
+  body:has(#stage) > main { flex:1; height:auto; min-height:0; overflow:hidden; grid-template-rows:minmax(0,1fr); }
+  body:has(#stage) #stage { min-height:0; }
+  body:has(#stage) aside { overflow:auto; min-height:0; }
+}

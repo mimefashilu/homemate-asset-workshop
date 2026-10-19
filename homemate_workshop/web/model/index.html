@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>御宅伴侣 · 模型工坊</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">{"imports":{"three":"/vendor/three.module.js"}}</script>
+  <script src="/vendor/lucide.min.js" defer></script>
+  <script type="module" src="app.js"></script>
+  <link rel="stylesheet" href="/shared.css">
+</head>
+<body>
+  <nav class="workshop-nav" aria-label="工坊导航"><a href="/">素材工坊</a><a href="/textures/">贴图</a><a href="/models/" aria-current="page">模型</a><a href="/guide/">使用指南</a></nav>
+  <header>
+    <div>
+      <h1>御宅伴侣 <span>模型工坊</span></h1>
+      <p id="source-status">正在读取模型清单…</p><div class="model-actions"><button id="prepare-models">准备 / 更新模型资源</button><button id="recommended">生成推荐轻度候选</button><a href="/">备份与恢复</a></div>
+    </div>
+    <div class="toolbar">
+      <fieldset class="modes" aria-label="显示模式">
+        <label><input type="radio" name="mode" value="texture" checked><span>贴图</span></label>
+        <label><input type="radio" name="mode" value="clay"><span>素模</span></label>
+        <label><input type="radio" name="mode" value="wire"><span>线框</span></label>
+        <label><input type="radio" name="mode" value="heatmap"><span>位移热力</span></label>
+      </fieldset>
+      <button id="rotate" class="icon" title="自动旋转" aria-label="自动旋转" aria-pressed="false"><i data-lucide="rotate-3d"></i></button>
+      <button id="reset" class="icon" title="重置视角" aria-label="重置视角"><i data-lucide="focus"></i></button>
+    </div>
+  </header>
+  <main>
+    <section id="stage" aria-label="模型三维预览">
+      <div id="loading" role="status">正在读取模型…</div>
+      <div class="view-toolbar" aria-label="视角">
+        <button data-view="front">正面</button><button data-view="side">侧面</button><button data-view="back">背面</button>
+      </div>
+    </section>
+    <aside>
+      <label class="field">模型<select id="model"></select></label>
+      <label class="field">版本<select id="variant"><option value="original">原版</option><option value="mild">轻度样本</option><option value="medium">中度样本</option></select></label>
+      <div class="compare-row">
+        <button id="compare">叠加原版轮廓</button>
+        <button id="focus-model">聚焦模型</button>
+      </div>
+      <div class="toggles">
+        <label><input type="checkbox" id="face" checked>脸部</label>
+        <label><input type="checkbox" id="front" checked>刘海与侧发</label>
+        <label><input type="checkbox" id="back" checked>后发</label>
+      </div>
+      <dl><div><dt>顶点</dt><dd id="vertices">—</dd></div><div><dt>三角面</dt><dd id="triangles">—</dd></div><div><dt>当前版本</dt><dd id="current-variant">—</dd></div></dl>
+      <section class="panel">
+        <h2>当前阶段</h2>
+        <p>候选先保存到独立工作区；检查并确认后，可备份并安装当前候选。</p>
+        <div class="heatmap-key"><span>位移小</span><i></i><span>位移大</span></div>
+      </section>
+      <section class="editor-panel">
+        <h2>生成候选模型</h2>
+        <label class="field">操作<select id="operation"><option value="smooth">平滑</option><option value="inflate">膨胀</option><option value="contract">收缩</option></select></label>
+        <label class="field">目标网格<select id="target-frame"><option value="*">全部头发网格</option></select></label>
+        <label class="field compact">强度<input id="strength" type="number" min="0.01" max="0.8" step="0.01" value="0.18"></label>
+        <label class="field compact">迭代次数<input id="iterations" type="number" min="1" max="8" step="1" value="3"></label>
+        <label class="field compact">最大位移<input id="max-displacement" type="number" min="0.001" max="0.12" step="0.001" value="0.06"></label>
+        <button id="create-candidate" class="primary">生成候选</button>
+        <p id="candidate-status" class="status" role="status"></p>
+      </section>
+      <section class="panel" id="report-panel" hidden>
+        <h2>候选报告</h2>
+        <p id="report-text"></p>
+        <button id="preflight" hidden>安装前检查</button><div class="model-actions"><a id="download-candidate" download>导出候选 XX</a><button id="install-candidate" disabled>备份并安装当前候选</button></div>
+        <p id="preflight-status" class="status" role="status"></p>
+      </section>
+      <section class="texture-section">
+        <h2>模型贴图 <small id="texture-size"></small></h2>
+        <a id="texture-link" target="_blank"><img id="texture" alt="模型贴图"></a>
+      </section>
+    </aside>
+  </main>
+</body>
+</html>

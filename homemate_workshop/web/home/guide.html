@@ -1,0 +1,8 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>使用指南 · 素材工坊</title><link rel="stylesheet" href="/shared.css"><link rel="stylesheet" href="/home.css"></head><body>
+<nav class="workshop-nav" aria-label="工坊导航"><a href="/">素材工坊</a><a href="/textures/">贴图</a><a href="/models/">模型</a><a href="/guide/" aria-current="page">使用指南</a></nav>
+<main class="dashboard guide"><header class="hero"><span class="eyebrow">WORKFLOW</span><h1>从预览开始，确认后写入。</h1><p>修改过程保存在本地工作区。安装贴图或模型前完全退出游戏。</p></header>
+<section><h2>贴图制作</h2><ol><li>进入贴图工坊，选择资源包及独立图片或 XX 模型。</li><li>组合使用名称搜索与分辨率筛选；导出当前、勾选、筛选或整包 PNG，也可选原格式。</li><li>重绘时保持 UV 布局。导入图片后查看原图、待写入、拖动对照和差异图。默认保留原透明通道。</li><li>批量导入需要选择包含 <code>texture-manifest.json</code> 的提取目录。</li><li>确认外观后选择“写入游戏”；工坊先备份原包。也可以打包贴图补丁供之后载入。</li></ol><p>“2× 采样”是插值与锐化样品。需要真正重绘时，可用自己的绘图工具或 ComfyUI 工作流。</p></section>
+<section><h2>模型制作</h2><ol><li>在首页或模型页面点“准备模型资源”，从当前 AHM05_01.pp 生成预览。</li><li>选择刘海、侧发或后发；支持贴图、素模、线框、正侧背视角及部件显示开关。</li><li>选择平滑、膨胀或收缩，设置目标头发网格和位移上限，然后生成候选。</li><li>切换候选，检查位移热力图、原版轮廓及报告。可导出候选 XX，或生成推荐轻度平滑批次。</li><li>先执行安装前检查，再安装当前候选。工坊验证当前原模型、受保护字节和编码往返，备份后仅替换所选模型。</li></ol><p>当前几何编辑仅支持已验证的 XX v2 头发网格；脸部、UV、面索引、权重、骨骼、材质和贴图保持不变。</p></section>
+<section><h2>备份与恢复</h2><p>首页和贴图工坊均可恢复模型及贴图备份。按安装顺序倒序恢复；如果资源包又被外部补丁修改，工坊会拒绝覆盖。旧项目工作区与备份保留在原目录，新项目使用独立工作区。</p><p>游戏内的动画、穿插、透明边缘和帧率需要实际运行检查。候选报告只说明文件结构和修改范围。</p></section>
+<section><h2>GitHub 项目内容</h2><p>源码包包含界面、解析器、工作流模板、测试及文档。游戏资源、提取缓存、备份、候选、个人路径和原生解包器留在本机。</p><p>详细安装、功能状态与开发说明见项目根目录 README 和 docs。</p></section>
+<footer>御宅伴侣素材工坊 · 0.2.0</footer></main></body></html>

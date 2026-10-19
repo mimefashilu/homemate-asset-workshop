@@ -1,0 +1,79 @@
+{
+  "last_node_id": 4,
+  "last_link_id": 3,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [40, 40],
+      "size": [315, 314],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": null, "slot_index": 0},
+        {"name": "MASK", "type": "MASK", "links": [1], "slot_index": 1}
+      ],
+      "title": "Original texture (transparent PNG)",
+      "properties": {"Node name for S&R": "LoadImage"},
+      "widgets_values": ["original-transparent.png", "image"]
+    },
+    {
+      "id": 2,
+      "type": "LoadImage",
+      "pos": [40, 390],
+      "size": [315, 314],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {"name": "IMAGE", "type": "IMAGE", "links": [2], "slot_index": 0},
+        {"name": "MASK", "type": "MASK", "links": null, "slot_index": 1}
+      ],
+      "title": "Generated texture (RGB PNG)",
+      "properties": {"Node name for S&R": "LoadImage"},
+      "widgets_values": ["generated-rgb.png", "image"]
+    },
+    {
+      "id": 3,
+      "type": "JoinImageWithAlpha",
+      "pos": [430, 220],
+      "size": [270, 90],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {"name": "image", "type": "IMAGE", "link": 2},
+        {"name": "alpha", "type": "MASK", "link": 1}
+      ],
+      "outputs": [{"name": "IMAGE", "type": "IMAGE", "links": [3], "slot_index": 0}],
+      "properties": {"Node name for S&R": "JoinImageWithAlpha"},
+      "widgets_values": []
+    },
+    {
+      "id": 4,
+      "type": "SaveImage",
+      "pos": [790, 220],
+      "size": [315, 270],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [{"name": "images", "type": "IMAGE", "link": 3}],
+      "outputs": [],
+      "title": "Save RGBA PNG",
+      "properties": {"Node name for S&R": "SaveImage"},
+      "widgets_values": ["HomeMate_RGBA"]
+    }
+  ],
+  "links": [
+    [1, 1, 1, 3, 1, "MASK"],
+    [2, 2, 0, 3, 0, "IMAGE"],
+    [3, 3, 0, 4, 0, "IMAGE"]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

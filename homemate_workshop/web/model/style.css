@@ -1,0 +1,28 @@
+:root { color-scheme: light; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; color: #203238; background: #dfe8ea; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: linear-gradient(135deg, #e8f0f1, #cbdadd); }
+header { min-height: 72px; padding: 14px 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background: rgba(255,255,255,.72); border-bottom: 1px solid rgba(31,68,75,.18); }
+h1 { margin: 0; font-size: 22px; letter-spacing: .04em; } h1 span { color: #3e7d83; font-weight: 500; }
+header p { margin: 6px 0 0; color: #607477; font-size: 12px; }
+.toolbar, .modes, .compare-row, .view-toolbar { display: flex; align-items: center; gap: 8px; }
+.modes { border: 0; margin: 0; padding: 0; } .modes label { display: flex; align-items: center; gap: 4px; font-size: 13px; }
+button, select { border: 1px solid #aac0c2; border-radius: 7px; background: #f7fbfb; color: #26464b; padding: 7px 10px; font: inherit; cursor: pointer; }
+button:hover, select:hover { background: #fff; border-color: #6c9da1; } button[aria-pressed="true"] { background: #d2eeee; border-color: #4d9094; }
+.icon { width: 34px; height: 34px; padding: 7px; } svg { width: 17px; height: 17px; }
+main { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 14px; padding: 14px; min-height: calc(100vh - 72px); }
+#stage { position: relative; min-height: 620px; overflow: hidden; border: 1px solid rgba(42,84,88,.2); border-radius: 12px; background: #e7eef0; box-shadow: 0 14px 35px rgba(28,64,70,.14); }
+#stage canvas { display: block; width: 100%; height: 100%; } #loading { position: absolute; z-index: 2; left: 16px; top: 15px; padding: 8px 11px; border-radius: 8px; background: rgba(255,255,255,.86); color: #476569; font-size: 13px; } #loading[hidden] { display: none; }
+.view-toolbar { position: absolute; left: 16px; bottom: 15px; } .view-toolbar button { background: rgba(255,255,255,.86); }
+aside { padding: 16px; border: 1px solid rgba(42,84,88,.16); border-radius: 12px; background: rgba(250,253,253,.86); box-shadow: 0 10px 25px rgba(28,64,70,.08); }
+.field { display: grid; gap: 6px; margin-bottom: 13px; color: #536d70; font-size: 12px; } .field select { width: 100%; }
+.compare-row { margin: 8px 0 15px; } .compare-row button { flex: 1; font-size: 12px; }
+.toggles { display: grid; gap: 7px; padding: 12px 0; border-top: 1px solid #d6e2e3; border-bottom: 1px solid #d6e2e3; font-size: 13px; }
+dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 15px 0; } dl div { padding: 8px 5px; border-radius: 7px; background: #edf5f5; text-align: center; } dt { color: #6b8385; font-size: 11px; } dd { margin: 4px 0 0; font-size: 15px; font-weight: 600; }
+.panel { margin: 15px 0; padding: 11px; border-radius: 8px; background: #eef6f5; color: #607477; font-size: 12px; line-height: 1.6; } h2 { margin: 0 0 7px; font-size: 14px; color: #36585d; } .panel p { margin: 0; }
+.editor-panel { margin: 15px 0; padding: 11px; border: 1px solid #c7dddd; border-radius: 8px; background: #f5fbfb; } .editor-panel h2 { margin-bottom: 10px; }
+.heatmap-key { display: flex; align-items: center; gap: 7px; margin-top: 9px; color: #6b8385; font-size: 11px; } .heatmap-key i { flex: 1; height: 7px; border-radius: 5px; background: linear-gradient(90deg, #2563eb, #22c55e, #facc15, #ef4444); }
+.compact { grid-template-columns: 1fr 92px; align-items: center; } .compact input { width: 92px; justify-self: end; padding: 6px 7px; border: 1px solid #aac0c2; border-radius: 6px; color: #26464b; background: #fff; }
+.primary { width: 100%; margin-top: 2px; background: #d2eeee; border-color: #4d9094; } .status { min-height: 18px; margin: 8px 0 0; color: #5a777b; font-size: 12px; }
+#preflight { margin-top: 7px; width: 100%; font-size: 12px; }
+.texture-section { margin-top: 14px; } .texture-section h2 { display: flex; justify-content: space-between; } .texture-section small { color: #739094; font-weight: 400; } .texture-section img { display: block; width: 100%; max-height: 170px; object-fit: contain; border-radius: 8px; background: #dce7e8; }
+@media (max-width: 900px) { header { align-items: flex-start; flex-direction: column; } main { grid-template-columns: 1fr; } #stage { min-height: 65vh; } }

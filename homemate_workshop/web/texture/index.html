@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>御宅伴侣 · 贴图工坊</title>
+  <link rel="stylesheet" href="/textures/style.css">
+  <script src="/textures/app.js" defer></script>
+  <link rel="stylesheet" href="/shared.css">
+</head>
+<body>
+  <nav class="workshop-nav" aria-label="工坊导航"><a href="/">素材工坊</a><a href="/textures/" aria-current="page">贴图</a><a href="/models/">模型</a><a href="/guide/">使用指南</a></nav>
+  <header class="app-header">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">纹</span><div><h1>御宅伴侣 · 贴图工坊</h1><span id="gameLocation" class="muted"></span></div></div>
+    <div class="header-actions">
+      <button id="loadPatch">载入补丁</button>
+      <button id="exportPatch">打包游戏补丁</button>
+      <button id="backupsButton">恢复备份</button>
+      <button id="applyButton" class="primary">写入游戏 <span id="stageCount">0</span></button>
+    </div>
+  </header>
+  <main class="app-layout">
+    <aside class="resource-panel">
+      <h2>资源包</h2>
+      <label class="sr-only" for="archiveSelect">资源包</label>
+      <select id="archiveSelect"></select>
+      <div class="resource-summary" id="archiveInfo"></div>
+      <label class="sr-only" for="modelSearch">搜索模型</label>
+      <input type="search" id="modelSearch" placeholder="搜索模型名称">
+      <nav id="memberList" aria-label="资源文件"></nav>
+    </aside>
+    <section class="browser-panel">
+      <div class="section-top"><h2 id="browserTitle">贴图</h2><span id="textureCount" class="muted"></span></div>
+      <label class="sr-only" for="textureSearch">搜索贴图</label>
+      <input type="search" id="textureSearch" placeholder="搜索贴图名称">
+      <label class="resolution-choice" for="resolutionFilter">分辨率 <select id="resolutionFilter" aria-label="按原图分辨率筛选"><option value="">全部分辨率</option></select></label>
+      <div class="export-tools">
+        <label><input id="selectPage" type="checkbox"> 本页</label>
+        <label for="exportFormat">导出格式</label>
+        <select id="exportFormat" aria-label="批量导出格式"><option value="png">PNG</option><option value="native">原始格式</option></select>
+        <button id="exportSelected">提取勾选</button>
+        <button id="exportFiltered">提取筛选</button>
+        <button id="exportAll">提取整包</button>
+      </div>
+      <div id="textureGrid" class="texture-grid" aria-label="贴图列表"></div>
+      <div class="pagination"><button id="previousPage" aria-label="上一页">‹</button><span id="pageInfo"></span><button id="nextPage" aria-label="下一页">›</button></div>
+    </section>
+    <section class="inspector-panel">
+      <div class="section-top"><h2 id="selectedName">请选择贴图</h2><span id="modifiedLabel" class="muted">原资源</span></div>
+      <div class="mode-tabs" role="group" aria-label="预览方式">
+        <button data-mode="compare" aria-pressed="true">对照</button><button data-mode="original" aria-pressed="false">原图</button><button data-mode="staged" aria-pressed="false">待写入</button><button data-mode="difference" aria-pressed="false">差异 ×8</button>
+      </div>
+      <div class="viewport" id="viewport">
+        <canvas id="previewCanvas" role="img" aria-label="贴图对照预览"></canvas>
+        <div id="previewEmpty">请选择贴图</div>
+        <div class="canvas-label left" id="leftLabel">原图</div><div class="canvas-label right" id="rightLabel">待写入</div>
+      </div>
+      <div class="view-tools">
+        <div class="zoom-tools"><button id="zoomOut" aria-label="缩小" title="缩小">−</button><select id="zoomSelect" aria-label="放大比例"><option value="1">适合窗口</option><option value="2">200%</option><option value="4">400%</option><option value="8">800%</option></select><button id="zoomIn" aria-label="放大" title="放大">+</button><button id="resetView" aria-label="重置视角" title="重置视角">↺</button></div>
+        <div class="swatches" role="group" aria-label="预览背景"><button data-bg="checker" class="checker-swatch" aria-label="透明棋盘背景" title="透明棋盘背景" aria-pressed="true"></button><button data-bg="light" class="light-swatch" aria-label="浅色背景" title="浅色背景" aria-pressed="false"></button><button data-bg="dark" class="dark-swatch" aria-label="深色背景" title="深色背景" aria-pressed="false"></button></div>
+      </div>
+      <label class="split-control" id="splitControl"><span>对照位置</span><input id="splitRange" type="range" min="0" max="100" value="50"><output id="splitOutput">50%</output></label>
+      <dl class="texture-details" id="textureDetails"></dl>
+      <label class="alpha-option"><input id="preserveAlpha" type="checkbox" checked> 导入时保留原透明通道</label>
+      <div class="edit-actions"><label class="export-choice" for="currentExportFormat">导出格式 <select id="currentExportFormat" aria-label="当前贴图导出格式"><option value="png">PNG</option><option value="native">原始格式</option></select></label><button id="exportCurrent">导出 PNG</button><button id="importImage" class="primary">导入新图</button><button id="upscaleImage">2× 采样</button><button id="discardImage">撤销此修改</button></div>
+      <div class="batch-actions"><button id="importFolder">批量导入文件夹</button><button id="upscaleSelected">勾选贴图 2×</button><button id="stagedButton">待写入清单</button></div>
+    </section>
+  </main>
+  <footer class="status-bar"><span id="status" role="status" aria-live="polite">正在读取资源…</span><progress id="jobProgress" max="100" value="0" hidden></progress><button id="openExport" hidden>打开输出目录</button><a id="resultDownload" download hidden>另存压缩包</a><span id="exportPath" class="muted" hidden></span></footer>
+  <input type="file" id="imageInput" accept="image/*,.tga,.dds" hidden>
+  <input type="file" id="patchInput" accept=".zip" hidden>
+  <input type="file" id="folderInput" webkitdirectory multiple hidden>
+  <dialog id="actionDialog"><div class="dialog-header"><h2 id="dialogTitle"></h2><button id="closeDialog" aria-label="关闭">×</button></div><div id="dialogBody"></div><div class="dialog-actions"><button id="cancelDialog">取消</button><button id="confirmDialog" class="primary">确认</button></div></dialog>
+</body>
+</html>
