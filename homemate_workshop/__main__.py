@@ -10,7 +10,7 @@ import urllib.request
 import webbrowser
 
 from .models import ModelWorkshop
-from .server import make_server
+from .server import make_server, close_server
 from .studio import Studio, atomic_json
 
 SOURCE = Path(__file__).resolve().parent.parent
@@ -118,8 +118,7 @@ def main(argv=None):
     except KeyboardInterrupt:
         pass
     finally:
-        server.studio.executor.shutdown(wait=True)
-        server.server_close()
+        close_server(server)
         if state_path.is_file() and json.loads(state_path.read_text(encoding="utf-8")).get("instance") == server.instance:
             state_path.unlink()
 

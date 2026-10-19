@@ -12,7 +12,7 @@ Copyright © 2010–2025 three.js authors。按 MIT License 分发，完整原�
 
 ## Python 依赖
 
-Pillow 与 NumPy 通过使用者的 Python 包管理环境安装，不把其运行库拷贝进源码包。可选的 Playwright 只用于开发测试，浏览器由使用者另行安装。
+源码方式通过 Python 包管理器安装 Pillow 与 NumPy。Windows 便携版附带 Python、Pillow、NumPy、Tcl/Tk 运行时与 PyInstaller 启动器，并在 licenses 目录保留相应许可声明；PyInstaller 声明包含启动器分发例外。具体构建版本记录在 portable-manifest.json。可选 Playwright 只用于开发测试，不放进便携包。
 
 ## 外部游戏工具和格式参考
 
@@ -26,4 +26,4 @@ Pillow 与 NumPy 通过使用者的 Python 包管理环境安装，不把其运�
 
 ComfyUI 工作流模板使用者需要自行安装对应模型和节点。实验模板不等于附带模型权重或素材使用授权。
 
-项目自身的开源许可证尚未由维护者指定；以上第三方声明继续分别适用。
+本项目自身源码按 MIT License 分发，见 LICENSE。以上第三方声明继续分别适用。

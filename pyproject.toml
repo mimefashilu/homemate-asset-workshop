@@ -4,10 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "homemate-asset-workshop"
-version = "0.2.0"
+version = "0.3.0"
 description = "Local texture editing, XX model candidates and reversible patches for HomeMate"
 readme = "README.md"
 requires-python = ">=3.10"
+license = {file = "LICENSE"}
 dependencies = ["Pillow>=10,<13", "numpy>=1.24,<3"]
 
 [project.optional-dependencies]
@@ -20,4 +21,4 @@ homemate-workshop = "homemate_workshop.__main__:main"
 include = ["homemate_workshop*"]
 
 [tool.setuptools.package-data]
-homemate_workshop = ["web/**/*", "comfyui/*.json", "comfyui/*.md", "comfyui/*.py"]
+homemate_workshop = ["web/**/*", "assets/*", "comfyui/*.json", "comfyui/*.md", "comfyui/*.py"]

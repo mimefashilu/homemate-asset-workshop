@@ -7,11 +7,12 @@ import re
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-TOP = {"README.md", "README.en.md", "CHANGELOG.md", "CONTRIBUTING.md", "THIRD_PARTY_NOTICES.md",
+TOP = {"README.md", "README.en.md", "CHANGELOG.md", "CONTRIBUTING.md", "THIRD_PARTY_NOTICES.md", "LICENSE",
        "pyproject.toml", "requirements.txt", "requirements-dev.txt", "config.example.json", "run.py",
-       "start.ps1", "stop.ps1", "启动素材工坊.cmd", "停止素材工坊.cmd", ".gitignore", ".gitattributes"}
+       "start.ps1", "stop.ps1", "启动素材工坊.cmd", "停止素材工坊.cmd", ".gitignore", ".gitattributes",
+       "portable_entry.py", "requirements-build.txt"}
 FOLDERS = {"homemate_workshop", "tests", "tools", "docs", ".github"}
-SUFFIXES = {".py", ".md", ".txt", ".json", ".html", ".css", ".js", ".yml", ".yaml", ".svg", ".png"}
+SUFFIXES = {".py", ".md", ".txt", ".json", ".html", ".css", ".js", ".yml", ".yaml", ".svg", ".png", ".ico"}
 
 
 def publication_files():
@@ -20,7 +21,7 @@ def publication_files():
         if not path.is_file():
             continue
         relative = path.relative_to(ROOT)
-        if any(p in {"workspace", "__pycache__", ".git", "node_modules", ".venv", "dist", "build"} or p.endswith(".egg-info") for p in relative.parts):
+        if any(p in {"workspace", "userdata", "__pycache__", ".git", "node_modules", ".venv", "dist", "build"} or p.endswith(".egg-info") for p in relative.parts):
             continue
         allowed = relative.as_posix() in TOP or (relative.parts[0] in FOLDERS and path.suffix in SUFFIXES)
         if not allowed:

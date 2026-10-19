@@ -25,6 +25,7 @@ import zipfile
 from PIL import Image, ImageFilter
 
 from .formats import build_archive, convert_image, exact, image_bytes, read_archive, read_xx, replace_xx, safe_name
+from .runtime import run_external, clean_dll_search
 
 APP_DIR = Path(__file__).resolve().parent
 IMAGE_EXTENSIONS = {'.bmp', '.tga', '.ema', '.png', '.jpg', '.dds'}
@@ -50,8 +51,9 @@ def resource_id(archive, member, texture=None):
 
 
 class Studio:
-    def __init__(self, game_dir, workspace):
+    def __init__(self, game_dir, workspace, extractor=None):
         self.game_dir, self.workspace = Path(game_dir).resolve(), Path(workspace).resolve()
+        self.extractor = Path(extractor).resolve() if extractor else self.game_dir / 'data' / 'PPExtractor0.6.2.exe'
         self.workspace.mkdir(parents=True, exist_ok=True)
         for folder in ('cache', 'staged', 'exports', 'backups', 'work'):
             (self.workspace / folder).mkdir(exist_ok=True)
@@ -152,10 +154,10 @@ class Studio:
             return records
 
     def native(self, argument):
-        tool = self.game_dir / 'data' / 'PPExtractor0.6.2.exe'
+        tool = self.extractor
         if not tool.is_file():
-            raise ValueError('Missing data/PPExtractor0.6.2.exe')
-        result = subprocess.run([str(tool), '/AHM', '/noretro', str(argument)], cwd=argument.parent,
+            raise ValueError('没有找到 PPExtractor0.6.2.exe，请在启动器中选择工具或放到游戏 data 目录')
+        result = run_external([str(tool), '/AHM', '/noretro', str(argument)], cwd=argument.parent,
                                 capture_output=True, timeout=300)
         if result.returncode:
             raise ValueError('PPExtractor failed: ' + (result.stdout + result.stderr).decode('mbcs', errors='replace')[-1000:])
@@ -282,7 +284,7 @@ class Studio:
         if os.name != 'nt':
             return
         names = {'@homemate.exe'} | {p.name.casefold() for p in self.game_dir.glob('*3DM*.exe')}
-        result = subprocess.run(['tasklist', '/FO', 'CSV', '/NH'], capture_output=True)
+        result = run_external(['tasklist', '/FO', 'CSV', '/NH'], capture_output=True, timeout=30)
         if result.returncode:
             raise ValueError('无法检查游戏进程。请用桌面的启动脚本运行贴图工坊，再执行写入或恢复。')
         rows = csv.reader(io.StringIO(result.stdout.decode('mbcs', errors='replace')))
@@ -391,7 +393,8 @@ class Studio:
             destination = folder.parent
         else:
             raise ValueError('Export does not exist')
-        os.startfile(str(destination))
+        with clean_dll_search():
+            os.startfile(str(destination))
         return dict(directory=str(destination))
 
     def import_patch(self, data):

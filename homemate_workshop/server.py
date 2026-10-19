@@ -55,7 +55,8 @@ class Handler(TextureHandler):
                 self.send({"service": "HomeMate Asset Workshop", "version": __version__, "token": self.studio.token,
                            "game_dir": str(self.studio.game_dir), "workspace": str(self.server.workspace),
                            "game_available": (self.studio.game_dir / "data").is_dir(),
-                           "extractor_available": (self.studio.game_dir / "data" / "PPExtractor0.6.2.exe").is_file(),
+                           "extractor_available": self.studio.extractor.is_file(),
+                           "portable": hasattr(self.server, "portable_data_dir"),
                            "model_count": len(manifest["models"]), "models_prepared": manifest["prepared"],
                            "staged_count": len(self.studio.staged), "backups": self.studio.backups()})
             elif route == "/api/models/manifest":
@@ -108,6 +109,22 @@ class Handler(TextureHandler):
             self.send({"error": str(error)}, status=500)
 
     def do_POST(self):
+        activity = getattr(self.server, "activity", None)
+        if activity is None:
+            return self._do_POST()
+        with activity:
+            if self.server.closing:
+                self.send({"error": "工坊正在关闭，请等待任务完成后重新启动"}, status=503)
+                return
+            self.server.active_requests += 1
+        try:
+            self._do_POST()
+        finally:
+            with activity:
+                self.server.active_requests -= 1
+                activity.notify_all()
+
+    def _do_POST(self):
         try:
             self.validate(mutation=True)
             route = urlparse(self.path).path
@@ -138,9 +155,9 @@ class Handler(TextureHandler):
             self.send({"error": str(error)}, status=500)
 
 
-def make_server(game_dir, workspace, port=8765, attempts=20):
+def make_server(game_dir, workspace, port=8765, attempts=20, extractor=None):
     workspace = Path(workspace).resolve()
-    studio = Studio(game_dir, workspace / "textures")
+    studio = Studio(game_dir, workspace / "textures", extractor=extractor)
     try:
         for candidate in ([0] if port == 0 else range(port, min(port + attempts, 65536))):
             try:
@@ -153,7 +170,23 @@ def make_server(game_dir, workspace, port=8765, attempts=20):
         server.workspace = workspace
         server.models = ModelWorkshop(studio, workspace / "models")
         server.instance = __import__("secrets").token_hex(16)
+        server.activity = threading.Condition()
+        server.closing = False
+        server.active_requests = 0
         return server
     except Exception:
         studio.executor.shutdown(wait=True)
         raise
+
+
+def close_server(server):
+    """After serve_forever stops, finish HTTP writes and queued jobs before exit."""
+    activity = getattr(server, "activity", None)
+    if activity is not None:
+        with activity:
+            server.closing = True
+            while server.active_requests:
+                activity.wait(timeout=1)
+    server.studio.executor.shutdown(wait=True)
+    with server.studio.lock:
+        server.server_close()

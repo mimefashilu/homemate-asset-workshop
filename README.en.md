@@ -4,7 +4,21 @@ A local browser application combining the existing texture and model workshops f
 
 See the [Chinese README](README.md), [feature matrix](docs/FEATURES.md), and [development guide](docs/DEVELOPMENT.md) for details.
 
-## Run
+## Windows portable edition
+
+Target: Windows 10/11 x64; tested on Windows 11. The portable ZIP includes Python, Pillow, NumPy and a native launcher. No Python installation, pip commands or manual JSON configuration are required. The editing interface opens in the default browser.
+
+1. Download the **windows-x64-portable.zip** release and extract the entire folder.
+2. Double-click **素材工坊.exe**, keeping the accompanying `_internal` folder.
+3. Select the game root containing `data/*.pp`, or its `data` directory.
+4. The launcher detects `data/PPExtractor0.6.2.exe`, or lets you choose your own copy elsewhere.
+5. Start the workshop. Selected paths are saved for future launches.
+
+The game and external extractor are not included or automatically downloaded. Settings, candidates, exports, backups and logs are saved in `userdata` beside the EXE, falling back to a displayed user-local directory if necessary. Closing the launcher waits for active work and stops the service; repeated launches reuse the existing instance.
+
+For updates, stop the old version, extract the new version elsewhere and copy the old `userdata` beside the new EXE. See [portable instructions](docs/PORTABLE.md) and [packaging checks](docs/PACKAGING.md).
+
+## Run from source
 
 Requirements: Windows, Python 3.10+, Pillow, NumPy, your own game installation, and your own `data/PPExtractor0.6.2.exe` for AHM resource extraction/encoding. Game files and the extractor are not distributed here. The dashboard works without game data.
 
@@ -42,4 +56,4 @@ python tools/package_release.py
 
 Portable tests generate their own PP/XX samples. Private integration tests may use copies from a game installation; see the development guide. CI runs portable tests on Windows and Linux with Python 3.10 and 3.13. Linux is for source validation, not native game-resource support.
 
-The project license has not yet been selected by its maintainer. Bundled Three.js and Lucide retain their own notices in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Game assets, proprietary tools and generated texture patches are separate from this source project.
+The project source is licensed under **MIT**, see [LICENSE](LICENSE). Third-party components retain their own licenses, included with portable distributions and listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Game assets, proprietary tools and user-created patches are separate from the project license and distribution.
